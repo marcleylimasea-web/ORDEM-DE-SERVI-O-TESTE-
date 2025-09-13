@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerador de O.S</title>
+    <style>
+        :root {
+            --gradiente: linear-gradient(to right, #000000, #434343);
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-image: var(--gradiente);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 30px;
+            color: #fff;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 15px;
+            color: #fff;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 6px;
+            box-sizing: border-box;
+            border-radius: 4px;
+            border: none;
+            background-color: #fff;
+            color: #000;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #ff4c4c;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #e53935;
+        }
+
+        #osModal {
+            display: none;
+            position: fixed;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #222;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 9999;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 0 15px rgba(255,255,255,0.3);
+        }
+
+        .copy-btn {
+            background-color: #4caf50;
+        }
+
+        .copy-btn:hover {
+            background-color: #388e3c;
+        }
+
+        .fechar {
+            float: right;
+            background-color: #ff4c4c;
+            border: none;
+            color: white;
+            padding: 4px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .creditos {
+            margin-top: 40px;
+            font-style: italic;
+            text-align: center;
+            color: #aaa;
+        }
+
+        #fireworks-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            width: 100%;
+            height: 100%;
+            z-index: 9998;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="fireworks-canvas"></canvas>
+
+<h1>GERADOR DE O.S</h1>
+
+<form id="osForm">
+    <label>Escolha a cor do tema:</label>
+    <select id="corTema" onchange="mudarCor()">
+        <option value="preto">Preto</option>
+        <option value="rosa">Rosa</option>
+        <option value="verde">Verde</option>
+        <option value="azul">Azul</option>
+        <option value="vermelho">Vermelho</option>
+        <option value="roxo">Roxo</option>
+    </select>
+
+    <label>PRIORIDADE:</label>
+    <input type="text" id="prioridade" value="PADRÃO">
+
+    <label>TIPO DE O.S.:</label>
+    <select id="tipoOs" onchange="preencherRelatoOrientacao()">
+        <option value="">-- Selecione --</option>
+        <option value="drop-rompido">Manutenção - Drop rompido</option>
+        <option value="potencia-atenuada">Manutenção - Potência atenuada</option>
+        <option value="sem-conexao">Suporte - Sem conexão</option>
+    </select>
+
+    <label>TITULAR:</label>
+    <input type="text" id="titular">
+
+    <label>ENDEREÇO, Localização e CTO:</label>
+    <textarea id="endereco"></textarea>
+
+    <label>RESPONSÁVEL QUE RECEBERÁ A EQUIPE:</label>
+    <input type="text" id="responsavel">
+
+    <label>MELHOR HORÁRIO PARA ATENDIMENTO:</label>
+    <select id="horario">
+        <option value="Manhã">Manhã</option>
+        <option value="Tarde">Tarde</option>
+        <option value="Comercial">Comercial</option>
+    </select>
+
+    <label>RELATO:</label>
+    <textarea id="relato"></textarea>
+
+    <label>ORIENTAÇÃO PARA OS TÉCNICOS:</label>
+    <textarea id="orientacao"></textarea>
+
+    <label>VALIDADOR:</label>
+    <select id="validador">
+        <option value="">-- Selecione --</option>
+        <option>THAIS COUTINHO</option>
+        <option>MATHEUS PEREIRA</option>
+        <option>ANDREI SOUSA</option>
+        <option>DANIEL BRASIL</option>
+        <option>HELEN TOCANTINS</option>
+        <option>PAULO HENRIQUE</option>
+    </select>
+
+    <button type="button" onclick="gerarOS()">Gerar Ordem de Serviço</button>
+</form>
+
+<div id="osModal">
+    <button class="fechar" onclick="document.getElementById('osModal').style.display='none'">X</button>
+    <pre id="osOutput"></pre>
+    <button class="copy-btn" onclick="copiarOS()">Copiar OS para área de transferência</button>
+</div>
+
+<div class="creditos">
+    Criador: Marcley Lima
+</div>
+
+<script>
+    let osTexto = "";
+
+    function mudarCor() {
+        const cor = document.getElementById("corTema").value;
+        const root = document.documentElement;
+
+        const cores = {
+            preto: "linear-gradient(to right, #000000, #434343)",
+            rosa: "linear-gradient(to right, #ff5f6d, #ffc371)",
+            verde: "linear-gradient(to right, #11998e, #38ef7d)",
+            azul: "linear-gradient(to right, #2193b0, #6dd5ed)",
+            vermelho: "linear-gradient(to right, #e52d27, #b31217)",
+            roxo: "linear-gradient(to right, #8e2de2, #4a00e0)"
+        };
+
+        root.style.setProperty('--gradiente', cores[cor]);
+    }
+
+    function preencherRelatoOrientacao() {
+        const tipo = document.getElementById("tipoOs").value;
+        const relato = document.getElementById("relato");
+        const orientacao = document.getElementById("orientacao");
+
+        if (tipo === "drop-rompido") {
+            relato.value = "Cliente entrou em contato para relatar a falta de conexão à internet. Foi verificado que os cabos da fibra foram rompidos por um caminhão resultando na interrupção do serviço.";
+            orientacao.value = "Fazer o lançamento do cabo drop verificando a melhor rota para restabelecer a conexão do cliente. Efetuar todos os testes de velocidade junto ao cliente e com o setor de Autenticação.";
+        } else if (tipo === "potencia-atenuada") {
+            relato.value = "O Cliente comunicou constante instabilidade em sua rede. Foi verificado que a potência que chega até o equipamento está atenuada resultando na interrupção do serviço.";
+            orientacao.value = "Verificar a integridade do equipamento, dos cabos e dos conectores com o intuito de normalizar a potência que chega até o equipamento. Realizar todos os testes possíveis com o cliente para esclarecer qualquer dúvida que ele possa ter.";
+        } else if (tipo === "sem-conexao") {
+            relato.value = "Cliente informa lentidão em sua conexão. Foram realizadas diversas configurações remotas em seu equipamento, no entanto, sua conexão não normalizou.";
+            orientacao.value = "Verificar a integridade do equipamento, Verificar a integridade dos conectores. Caso necessário EFETUAR A TROCA DO EQUIPAMENTO. Efetuar todos os testes de velocidade junto ao cliente e com o setor de Autenticação.";
+        } else {
+            relato.value = "";
+            orientacao.value = "";
+        }
+    }
+
+    function gerarOS() {
+        preencherRelatoOrientacao();
+
+        const prioridade = document.getElementById("prioridade").value;
+        const tipoOs = document.getElementById("tipoOs").options[document.getElementById("tipoOs").selectedIndex].text;
+        const titular = document.getElementById("titular").value;
+        const endereco = document.getElementById("endereco").value;
+        const responsavel = document.getElementById("responsavel").value;
+        const horario = document.getElementById("horario").value;
+        const relato = document.getElementById("relato").value;
+        const orientacao = document.getElementById("orientacao").value;
+        const validador = document.getElementById("validador").value;
+
+        osTexto = `
+ORDEM DE SERVIÇO
+
+PRIORIDADE: ${prioridade}
+TIPO DE O.S.: ${tipoOs}
+
+TITULAR:
+${titular}
+
+ENDEREÇO, Localização e CTO:
+${endereco}
+
+RESPONSÁVEL QUE RECEBERÁ A EQUIPE:
+${responsavel}
+
+MELHOR HORÁRIO PARA ATENDIMENTO:
+${horario}
+
+RELATO:
+${relato}
+
+ORIENTAÇÃO PARA OS TÉCNICOS:
+${orientacao}
+
+VALIDADOR:
+${validador}
+
+Criador: Marcley Lima
+`;
+
+        document.getElementById("osOutput").innerText = osTexto;
+        document.getElementById("osModal").style.display = "block";
+
+        iniciarFogos();
+    }
+
+    function copiarOS() {
+        navigator.clipboard.writeText(osTexto).then(() => {
+            alert("Ordem de Serviço copiada para a área de transferência!");
+        });
+    }
+
+    // FOGOS DE ARTIFÍCIO
+    const canvas = document.getElementById('fireworks-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const fireworks = [];
+
+    function iniciarFogos() {
+        for (let i = 0; i < 50; i++) {
+            fireworks.push({
+                x: canvas.width / 2,
+                y: canvas.height,
+                radius: Math.random() * 2 + 1,
+                color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                dx: Math.random() * 6 - 3,
+                dy: Math.random() * -7 - 3,
+                life: 100
+            });
+        }
+    }
+
+    function animarFogos() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        for (let i = fireworks.length - 1; i >= 0; i--) {
+            let f = fireworks[i];
+            ctx.beginPath();
+            ctx.arc(f.x, f.y, f.radius, 0, Math.PI * 2);
+            ctx.fillStyle = f.color;
+            ctx.fill();
+            f.x += f.dx;
+            f.y += f.dy;
+            f.dy += 0.1;
+            f.life--;
+
+            if (f.life <= 0) {
+                fireworks.splice(i, 1);
+            }
+        }
+
+        requestAnimationFrame(animarFogos);
+    }
+
+    animarFogos();
+</script>
+
+</body>
+</html>

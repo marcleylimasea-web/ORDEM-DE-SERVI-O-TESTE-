@@ -1,34 +1,55 @@
-ipt>
-
-</body>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mascote Nick - SEA Telecom</title>
+  <title>Mascote 3D</title>
   <style>
-    body {
-      background-color: #121212;
-      color: #fff;
-      text-align: center;
-      font-family: Arial, sans-serif;
-    }
-    .mascote {
-      margin-top: 40px;
-    }
-    .mascote img {
-      width: 350px; /* Ajuste o tamanho como preferir */
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-    }
+    body { margin: 0; }
+    canvas { display: block; }
   </style>
 </head>
 <body>
-  <h1>Mascote Nick - SEA Telecom</h1>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+  <script>
+    // Cena
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x121212);
 
-  <div class="mascote">
-    <img src="https://monteirodesign3d.com/wp-content/uploads/2022/11/Nick_SEA_Telecom.png" alt="Mascote Nick - SEA Telecom">
-  </div>
+    // Câmera
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 5;
+
+    // Renderizador
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Criando um "mascote simples" com formas básicas
+    const material = new THREE.MeshStandardMaterial({ color: 0x1e90ff });
+
+    // Corpo
+    const body = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 2, 32), material);
+    scene.add(body);
+
+    // Cabeça
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.7, 32, 32), new THREE.MeshStandardMaterial({ color: 0xffcc99 }));
+    head.position.y = 1.5;
+    scene.add(head);
+
+    // Luz
+    const light = new THREE.PointLight(0xffffff, 1, 100);
+    light.position.set(5, 5, 5);
+    scene.add(light);
+
+    // Animação
+    function animate() {
+      requestAnimationFrame(animate);
+      body.rotation.y += 0.01;
+      head.rotation.y += 0.01;
+      renderer.render(scene, camera);
+    }
+    animate();
+  </script>
 </body>
 </html>
